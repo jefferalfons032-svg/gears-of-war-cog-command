@@ -1,0 +1,177 @@
+{% extends "gears_jeff/base_modulo.html" %}
+
+{% block titulo %}Juegos | Gears of War{% endblock %}
+{% block encabezado %}UNIVERSO <span>GEARS OF WAR</span>{% endblock %}
+{% block descripcion %}
+Consulta las entregas de la saga, sus plataformas y sus fechas de lanzamiento.
+{% endblock %}
+
+{% block contenido %}
+<style>
+.juegos-archivo{width:min(1180px,100%);margin:25px auto;padding:24px;box-sizing:border-box;color:#eeeef0;background:#101114;border:1px solid #38393e;border-top:4px solid #c51f32;font-family:"Rajdhani",sans-serif}
+.juegos-archivo *{box-sizing:border-box}
+.ja-barra,.ja-panel-titulo{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px}
+.ja-barra{padding:22px;background:linear-gradient(110deg,#302025,#191a1e 70%);border:1px solid #414146}
+.ja-identidad{display:flex;align-items:center;gap:15px}
+.ja-icono{display:grid;place-items:center;width:60px;height:60px;flex-shrink:0;background:#c51f32;color:#fff;font-weight:900;font-size:19px}
+.ja-micro,.ja-etiqueta{color:#aaaab1;font-size:10px;letter-spacing:2px}
+.ja-identidad h2{margin:6px 0 0;color:#fff;font-size:clamp(23px,3vw,31px)}
+.ja-identidad h2 span,.ja-panel-titulo h3 span{color:#ed3548}
+.ja-crear{display:flex;align-items:center;gap:12px;padding:12px 18px;color:#fff;text-decoration:none;background:#b71f31;border:1px solid #e33b4d;transition:.2s}
+.ja-crear:hover{background:#e0273d;transform:translateY(-2px)}
+.ja-crear-signo{font-size:28px}.ja-crear strong,.ja-crear small{display:block}.ja-crear small{margin-top:4px;color:#f5cbd0;font-size:10px}
+.ja-mensajes{display:grid;gap:8px;margin-top:16px}.ja-mensaje{padding:13px 16px;background:#202125;border-left:3px solid #c51f32}
+.ja-panel{margin-top:20px;padding:24px;background:#151619;border:1px solid #36373c}
+.ja-panel-titulo h3{margin:9px 0;color:#fff;font-size:clamp(24px,3vw,32px)}.ja-panel-titulo p{color:#b4b4bb}
+.ja-contador{min-width:155px;padding:14px;background:#202125;border-left:3px solid #c51f32}
+.ja-contador span,.ja-contador small{display:block;color:#aaaab1;font-size:10px;letter-spacing:1px}
+.ja-contador strong{display:block;margin:5px 0;color:white;font-size:42px;line-height:1.1}
+.ja-linea{height:2px;margin:24px 0;background:linear-gradient(90deg,#c51f32,#44444a,transparent)}
+.ja-listado{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.ja-tarjeta{min-width:0;overflow:hidden;background:#1b1c20;border:1px solid #3a3b40;transition:.25s;animation:ja-entrada .4s ease both}
+.ja-tarjeta:hover{border-color:#d22b3d;transform:translateY(-4px);box-shadow:0 12px 25px #0007}
+.ja-portada{position:relative;min-height:280px;overflow:hidden;background:#24252a;border-bottom:2px solid #79212d}
+.ja-portada img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.ja-tarjeta:hover .ja-portada img{transform:scale(1.05)}
+.ja-portada:after{position:absolute;inset:45% 0 0;content:"";background:linear-gradient(transparent,#090a0def);pointer-events:none}
+.ja-sin-portada{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#aaaab1}
+.ja-sin-portada strong{font-size:44px;letter-spacing:5px;color:white}.ja-sin-portada span{font-size:10px;letter-spacing:2px}
+.ja-folio,.ja-estado{position:absolute;z-index:2;top:13px;padding:7px 9px;background:#101114e8;font-size:10px;font-weight:700;letter-spacing:1px}
+.ja-folio{left:12px;border-left:2px solid #d22b3d}.ja-estado{right:12px}
+.ja-activo{color:#83dfa6;border:1px solid #5ab98250}.ja-inactivo{color:#ef818a;border:1px solid #df596650}
+.ja-cuerpo{display:flex;flex-direction:column;padding:20px}
+.ja-cuerpo h3{margin:10px 0;color:white;font-size:29px;line-height:1.1;overflow-wrap:anywhere}
+.ja-descripcion{color:#b8b8bf;font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+.ja-datos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:14px}
+.ja-dato{min-width:0;padding:12px;background:#24252a;border-left:2px solid #7d2631}
+.ja-dato-ancho{grid-column:1/-1}.ja-dato span{display:block;margin-bottom:5px;color:#aaaab1;font-size:10px;letter-spacing:1px}
+.ja-dato strong{display:block;color:#f0f0f2;font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.ja-acciones{display:flex;gap:10px;margin-top:18px}
+.ja-acciones a{display:flex;align-items:center;justify-content:center;flex:1;min-width:0;min-height:44px;padding:12px 8px;font-size:11px;font-weight:700;letter-spacing:.7px;text-align:center;text-decoration:none;transition:.2s}
+.ja-btn-editar{background:#292a2f;border:1px solid #55565c;color:white}.ja-btn-editar:hover{background:#42434a;transform:translateY(-2px)}
+.ja-btn-eliminar{background:#35191e;border:1px solid #c51f32;color:#ff8995}.ja-btn-eliminar:hover{background:#c51f32;color:white;transform:translateY(-2px)}
+.ja-pie{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid #3b3b41;color:#999aa1;font-size:9px;letter-spacing:1px}
+.ja-vacio{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:12px;padding:45px 15px;text-align:center;background:#1b1c20;border:1px dashed #55565c}
+.ja-vacio h3{color:white}.ja-vacio p{color:#b8b8bf;line-height:1.6}
+.ja-pie-general{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:15px;color:#a3a3aa;font-size:10px;letter-spacing:1px}
+@keyframes ja-entrada{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:850px){.ja-listado{grid-template-columns:1fr}}
+@media(max-width:560px){.juegos-archivo{padding:12px}.ja-barra,.ja-panel{padding:15px}.ja-panel-titulo{align-items:stretch;flex-direction:column}.ja-crear{width:100%}.ja-datos{grid-template-columns:1fr}.ja-dato-ancho{grid-column:auto}}
+@media(max-width:420px){.ja-acciones{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){.juegos-archivo *{animation:none!important;transition:none!important}}
+</style>
+
+<section class="juegos-archivo">
+    <header class="ja-barra">
+        <div class="ja-identidad">
+            <span class="ja-icono">COG</span>
+            <div>
+                <span class="ja-micro">COALITION OF ORDERED GOVERNMENTS</span>
+                <h2>ARCHIVO DE <span>VIDEOJUEGOS</span></h2>
+            </div>
+        </div>
+        <a href="{% url 'gears_jeff:crear_juego' %}" class="ja-crear">
+            <span class="ja-crear-signo">+</span>
+            <span><strong>REGISTRAR JUEGO</strong><small>AÑADIR ENTREGA A LA SAGA</small></span>
+        </a>
+    </header>
+
+    {% if messages %}
+    <div class="ja-mensajes">
+        {% for message in messages %}
+        <div class="ja-mensaje {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="ja-panel">
+        <div class="ja-panel-titulo">
+            <div>
+                <span class="ja-etiqueta">UNIVERSO GEARS OF WAR · 03</span>
+                <h3>ENTREGAS DE <span>LA SAGA</span></h3>
+                <p>Consulta las portadas, plataformas y datos de lanzamiento.</p>
+            </div>
+            <div class="ja-contador">
+                <span>JUEGOS REGISTRADOS</span>
+                <strong>{{ juegos|length|stringformat:"02d" }}</strong>
+                <small>REGISTROS EN SISTEMA</small>
+            </div>
+        </div>
+        <div class="ja-linea"></div>
+
+        {% if juegos %}
+        <div class="ja-listado">
+            {% for registro in juegos %}
+            <article class="ja-tarjeta">
+                <div class="ja-portada">
+                    {% if registro.portada %}
+                    <img src="{{ registro.portada.url }}" alt="Portada de {{ registro.titulo }}" loading="lazy">
+                    {% else %}
+                    <div class="ja-sin-portada"><strong>GEARS</strong><span>PORTADA NO DISPONIBLE</span></div>
+                    {% endif %}
+                    <span class="ja-folio">ENTREGA {{ forloop.counter|stringformat:"03d" }}</span>
+                    <span class="ja-estado {% if registro.activo %}ja-activo{% else %}ja-inactivo{% endif %}">
+                        {% if registro.activo %}DISPONIBLE{% else %}INACTIVO{% endif %}
+                    </span>
+                </div>
+
+                <div class="ja-cuerpo">
+                    <span class="ja-etiqueta">REGISTRO DE VIDEOJUEGO</span>
+                    <h3>{{ registro.titulo }}</h3>
+                    <p class="ja-descripcion">{{ registro.descripcion|default:"Sin descripción registrada."|truncatewords:40 }}</p>
+
+                    <div class="ja-datos">
+                        {% if registro.fecha_lanzamiento %}
+                        <div class="ja-dato">
+                            <span>LANZAMIENTO</span>
+                            <strong>{{ registro.fecha_lanzamiento|date:"d/m/Y" }}</strong>
+                        </div>
+                        {% endif %}
+                        {% if registro.plataformas %}
+                        <div class="ja-dato">
+                            <span>PLATAFORMAS</span>
+                            <strong>{{ registro.plataformas }}</strong>
+                        </div>
+                        {% endif %}
+                        {% if registro.clasificacion %}
+                        <div class="ja-dato ja-dato-ancho">
+                            <span>CLASIFICACIÓN</span>
+                            <strong>{{ registro.clasificacion }}</strong>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="ja-acciones">
+                        <a href="{% url 'gears_jeff:editar_juego' registro.id %}" class="ja-btn-editar"
+                           aria-label="Editar juego {{ registro.titulo }}">EDITAR JUEGO</a>
+                        <a href="{% url 'gears_jeff:eliminar_juego' registro.id %}" class="ja-btn-eliminar"
+                           aria-label="Eliminar juego {{ registro.titulo }}">ELIMINAR JUEGO</a>
+                    </div>
+
+                    <footer class="ja-pie">
+                        <span>COALICIÓN · ARCHIVO CENTRAL</span>
+                        <span>REF. {{ forloop.counter|stringformat:"03d" }}</span>
+                    </footer>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="ja-vacio">
+            <span class="ja-etiqueta">CATÁLOGO VACÍO</span>
+            <h3>NO HAY JUEGOS REGISTRADOS</h3>
+            <p>Registra una entrega de Gears of War para comenzar el archivo.</p>
+            <a href="{% url 'gears_jeff:crear_juego' %}" class="ja-crear">
+                <span class="ja-crear-signo">+</span>
+                <span><strong>REGISTRAR JUEGO</strong><small>AÑADIR AL SISTEMA</small></span>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer class="ja-pie-general">
+        <span>CONEXIÓN CON LA BASE DE DATOS</span>
+        <span>COG COMMAND / ARCHIVO DE JUEGOS</span>
+    </footer>
+</section>
+{% endblock %}

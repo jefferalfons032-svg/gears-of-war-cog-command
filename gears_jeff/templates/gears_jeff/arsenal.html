@@ -1,0 +1,288 @@
+{% extends "gears_jeff/base_modulo.html" %}
+
+{% block titulo %}Arsenal | Gears of War{% endblock %}
+{% block encabezado %}ARSENAL DE <span>LA COALICIÓN</span>{% endblock %}
+
+{% block descripcion %}
+Consulta las armas disponibles, sus categorías, características y nivel de daño.
+{% endblock %}
+
+{% block contenido %}
+<style>
+.arsenal-archivo {
+    width: min(1180px, 100%);
+    margin: 25px auto;
+    padding: 24px;
+    box-sizing: border-box;
+    color: #eeeef0;
+    background: #101114;
+    border: 1px solid #38393e;
+    border-top: 4px solid #c51f32;
+    font-family: "Rajdhani", sans-serif;
+}
+.arsenal-archivo * { box-sizing: border-box; }
+
+.ar-barra, .ar-panel-titulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+.ar-barra {
+    padding: 22px;
+    background: linear-gradient(110deg, #302025, #191a1e 70%);
+    border: 1px solid #414146;
+}
+.ar-identidad { display: flex; align-items: center; gap: 15px; }
+.ar-icono {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    background: #c51f32;
+    color: white;
+    font-size: 19px;
+    font-weight: 900;
+}
+.ar-micro, .ar-etiqueta { color: #aaaab1; font-size: 10px; letter-spacing: 2px; }
+.ar-identidad h2 { margin: 6px 0 0; color: white; font-size: clamp(23px, 3vw, 31px); }
+.ar-identidad h2 span, .ar-panel-titulo h3 span { color: #ed3548; }
+
+.ar-crear {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    background: #b71f31;
+    border: 1px solid #e33b4d;
+    color: white;
+    text-decoration: none;
+    transition: .2s ease;
+}
+.ar-crear:hover { background: #e0273d; transform: translateY(-2px); }
+.ar-crear-signo { font-size: 28px; }
+.ar-crear strong, .ar-crear small { display: block; }
+.ar-crear small { margin-top: 4px; color: #f5cbd0; font-size: 10px; }
+
+.ar-mensajes { display: grid; gap: 8px; margin-top: 16px; }
+.ar-mensaje { padding: 13px 16px; background: #202125; border-left: 3px solid #c51f32; }
+.ar-panel { margin-top: 20px; padding: 24px; background: #151619; border: 1px solid #36373c; }
+.ar-panel-titulo h3 { margin: 9px 0; color: white; font-size: clamp(24px, 3vw, 32px); }
+.ar-panel-titulo p { color: #b4b4bb; line-height: 1.6; }
+.ar-contador { min-width: 155px; padding: 14px; background: #202125; border-left: 3px solid #c51f32; }
+.ar-contador span, .ar-contador small { display: block; color: #aaaab1; font-size: 10px; letter-spacing: 1px; }
+.ar-contador strong { display: block; margin: 5px 0; color: white; font-size: 42px; line-height: 1.1; }
+.ar-linea { height: 2px; margin: 24px 0; background: linear-gradient(90deg, #c51f32, #44444a, transparent); }
+
+.ar-listado { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.ar-tarjeta {
+    min-width: 0;
+    overflow: hidden;
+    background: #1b1c20;
+    border: 1px solid #3a3b40;
+    transition: .25s ease;
+    animation: ar-entrada .4s ease both;
+}
+.ar-tarjeta:hover { border-color: #d22b3d; transform: translateY(-4px); box-shadow: 0 12px 25px #0007; }
+.ar-imagen { position: relative; min-height: 260px; overflow: hidden; background: #24252a; border-bottom: 2px solid #79212d; }
+.ar-imagen img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; filter: saturate(.8); transition: transform .4s ease; }
+.ar-tarjeta:hover .ar-imagen img { transform: scale(1.05); }
+.ar-imagen::after { position: absolute; inset: 40% 0 0; content: ""; background: linear-gradient(transparent, #090a0def); pointer-events: none; }
+.ar-sin-imagen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #aaaab1; }
+.ar-sin-imagen strong { color: #eee; font-size: 44px; letter-spacing: 5px; }
+.ar-sin-imagen span { font-size: 10px; letter-spacing: 2px; }
+.ar-folio, .ar-estado { position: absolute; z-index: 2; top: 13px; padding: 7px 9px; background: #101114e8; font-size: 10px; font-weight: 700; letter-spacing: 1px; }
+.ar-folio { left: 12px; color: white; border-left: 2px solid #d22b3d; }
+.ar-estado { right: 12px; max-width: 55%; text-align: center; }
+.ar-activo { color: #83dfa6; border: 1px solid #5ab98250; }
+.ar-inactivo { color: #ef818a; border: 1px solid #df596650; }
+.ar-cuerpo { display: flex; flex-direction: column; padding: 20px; }
+.ar-cuerpo h3 { margin: 10px 0; color: white; font-size: 29px; line-height: 1.1; overflow-wrap: anywhere; }
+.ar-descripcion { color: #b8b8bf; font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+.ar-datos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-top: 14px; }
+.ar-dato { min-width: 0; padding: 12px; background: #24252a; border-left: 2px solid #7d2631; }
+.ar-dato-ancho { grid-column: 1 / -1; }
+.ar-dato span { display: block; margin-bottom: 5px; color: #aaaab1; font-size: 10px; letter-spacing: 1px; }
+.ar-dato strong { display: block; color: #f0f0f2; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+
+.ar-acciones { display: flex; gap: 10px; margin-top: 18px; }
+.ar-acciones a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    padding: 12px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-align: center;
+    text-decoration: none;
+    transition: background .2s ease, transform .2s ease;
+}
+.ar-btn-editar { background: #292a2f; border: 1px solid #55565c; color: white; }
+.ar-btn-editar:hover { background: #42434a; transform: translateY(-2px); }
+.ar-btn-eliminar { background: rgba(197,31,50,.12); border: 1px solid #c51f32; color: #ff7885; }
+.ar-btn-eliminar:hover { background: #c51f32; color: white; transform: translateY(-2px); }
+.ar-acciones a:focus-visible { outline: 2px solid white; outline-offset: 3px; }
+
+.ar-pie { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 18px; padding-top: 14px; border-top: 1px solid #3b3b41; color: #999aa1; font-size: 9px; letter-spacing: 1px; }
+.ar-vacio { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 45px 15px; text-align: center; background: #1b1c20; border: 1px dashed #55565c; }
+.ar-vacio h3 { color: white; }
+.ar-vacio p { color: #b8b8bf; line-height: 1.6; }
+.ar-pie-general { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 15px; color: #a3a3aa; font-size: 10px; letter-spacing: 1px; }
+
+@keyframes ar-entrada {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@media(max-width:850px) {
+    .ar-listado { grid-template-columns: 1fr; }
+}
+@media(max-width:560px) {
+    .arsenal-archivo { padding: 12px; }
+    .ar-barra, .ar-panel { padding: 15px; }
+    .ar-panel-titulo { align-items: stretch; flex-direction: column; }
+    .ar-crear { width: 100%; }
+    .ar-imagen { min-height: 230px; }
+    .ar-datos { grid-template-columns: 1fr; }
+    .ar-dato-ancho { grid-column: auto; }
+}
+@media(max-width:420px) {
+    .ar-acciones { flex-direction: column; }
+}
+@media(prefers-reduced-motion:reduce) {
+    .arsenal-archivo *, .arsenal-archivo *::before, .arsenal-archivo *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+</style>
+
+<section class="arsenal-archivo">
+    <header class="ar-barra">
+        <div class="ar-identidad">
+            <span class="ar-icono">COG</span>
+            <div>
+                <span class="ar-micro">COALITION OF ORDERED GOVERNMENTS</span>
+                <h2>INVENTARIO DE <span>ARMAMENTO</span></h2>
+            </div>
+        </div>
+
+        <a href="{% url 'gears_jeff:crear_arma' %}" class="ar-crear">
+            <span class="ar-crear-signo">+</span>
+            <span><strong>REGISTRAR ARMA</strong><small>AÑADIR EQUIPAMIENTO</small></span>
+        </a>
+    </header>
+
+    {% if messages %}
+        <div class="ar-mensajes">
+            {% for message in messages %}
+                <div class="ar-mensaje {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="ar-panel">
+        <div class="ar-panel-titulo">
+            <div>
+                <span class="ar-etiqueta">CENTRO LOGÍSTICO COG · 06</span>
+                <h3>ARSENAL DE <span>LA COALICIÓN</span></h3>
+                <p>Consulta el equipamiento, la munición y la disponibilidad operativa.</p>
+            </div>
+            <div class="ar-contador">
+                <span>ARMAS REGISTRADAS</span>
+                <strong>{{ armas|length|stringformat:"02d" }}</strong>
+                <small>REGISTROS EN SISTEMA</small>
+            </div>
+        </div>
+
+        <div class="ar-linea"></div>
+
+        {% if armas %}
+            <div class="ar-listado">
+                {% for registro in armas %}
+                    <article class="ar-tarjeta">
+                        <div class="ar-imagen">
+                            {% if registro.imagen %}
+                                <img src="{{ registro.imagen.url }}" alt="Imagen de {{ registro.nombre }}" loading="lazy">
+                            {% else %}
+                                <div class="ar-sin-imagen">
+                                    <strong>COG</strong>
+                                    <span>IMAGEN NO DISPONIBLE</span>
+                                </div>
+                            {% endif %}
+
+                            <span class="ar-folio">ARMA {{ forloop.counter|stringformat:"03d" }}</span>
+                            <span class="ar-estado {% if registro.disponible %}ar-activo{% else %}ar-inactivo{% endif %}">
+                                {% if registro.disponible %}DISPONIBLE{% else %}NO DISPONIBLE{% endif %}
+                            </span>
+                        </div>
+
+                        <div class="ar-cuerpo">
+                            <span class="ar-etiqueta">EXPEDIENTE DE ARMAMENTO</span>
+                            <h3>{{ registro.nombre }}</h3>
+                            <p class="ar-descripcion">{{ registro.descripcion|default:"Sin descripción registrada."|truncatewords:35 }}</p>
+
+                            <div class="ar-datos">
+                                <div class="ar-dato">
+                                    <span>CATEGORÍA</span>
+                                    <strong>{{ registro.get_categoria_display|default:registro.categoria|upper }}</strong>
+                                </div>
+                                <div class="ar-dato">
+                                    <span>NIVEL DE DAÑO</span>
+                                    <strong>{{ registro.dano }}</strong>
+                                </div>
+
+                                {% if registro.municion %}
+                                    <div class="ar-dato ar-dato-ancho">
+                                        <span>TIPO DE MUNICIÓN</span>
+                                        <strong>{{ registro.municion }}</strong>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="ar-acciones">
+                                <a href="{% url 'gears_jeff:editar_arma' registro.id %}"
+                                   class="ar-btn-editar"
+                                   aria-label="Editar arma {{ registro.nombre }}">
+                                    EDITAR ARMA
+                                </a>
+
+                                <a href="{% url 'gears_jeff:eliminar_arma' registro.id %}"
+                                   class="ar-btn-eliminar"
+                                   aria-label="Eliminar arma {{ registro.nombre }}">
+                                    ELIMINAR ARMA
+                                </a>
+                            </div>
+
+                            <footer class="ar-pie">
+                                <span>COALICIÓN · CENTRO LOGÍSTICO</span>
+                                <span>REF. {{ forloop.counter|stringformat:"03d" }}</span>
+                            </footer>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="ar-vacio">
+                <span class="ar-etiqueta">INVENTARIO VACÍO</span>
+                <h3>ARSENAL SIN REGISTROS</h3>
+                <p>Registra armas para consultar sus características.</p>
+                <a href="{% url 'gears_jeff:crear_arma' %}" class="ar-crear">
+                    <span class="ar-crear-signo">+</span>
+                    <span><strong>REGISTRAR PRIMERA ARMA</strong><small>AÑADIR AL SISTEMA</small></span>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <footer class="ar-pie-general">
+        <span>CONEXIÓN CON LA BASE DE DATOS</span>
+        <span>COG COMMAND / INVENTARIO DE ARMAMENTO</span>
+    </footer>
+</section>
+{% endblock %}

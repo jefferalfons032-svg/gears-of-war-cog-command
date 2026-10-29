@@ -1,0 +1,165 @@
+{% extends "gears_jeff/base_modulo.html" %}
+
+{% block titulo %}Escuadrones | Gears of War{% endblock %}
+{% block encabezado %}ESCUADRONES DE <span>COMBATE</span>{% endblock %}
+{% block descripcion %}
+Organiza equipos, consulta a sus líderes y conoce sus misiones asignadas.
+{% endblock %}
+
+{% block contenido %}
+<style>
+.escuadrones-archivo{width:min(1180px,100%);margin:25px auto;padding:24px;color:#eeeef0;background:#101114;border:1px solid #38393e;border-top:4px solid #c51f32;font-family:"Rajdhani",sans-serif;box-sizing:border-box}
+.escuadrones-archivo *{box-sizing:border-box}
+.ea-barra,.ea-panel-titulo{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px}
+.ea-barra{padding:22px;background:linear-gradient(110deg,#302025,#191a1e 70%);border:1px solid #414146}
+.ea-identidad{display:flex;align-items:center;gap:15px}
+.ea-icono{display:grid;place-items:center;width:60px;height:60px;flex-shrink:0;background:#c51f32;color:white;font-weight:900;font-size:19px}
+.ea-micro,.ea-etiqueta{color:#aaaab1;font-size:10px;letter-spacing:2px}
+.ea-identidad h2{margin:6px 0 0;color:white;font-size:clamp(23px,3vw,31px)}
+.ea-identidad h2 span,.ea-panel-titulo h3 span{color:#ed3548}
+.ea-crear{display:flex;align-items:center;gap:12px;padding:12px 18px;color:white;text-decoration:none;background:#b71f31;border:1px solid #e33b4d;transition:.2s}
+.ea-crear:hover{background:#e0273d;transform:translateY(-2px)}
+.ea-crear-signo{font-size:28px}.ea-crear strong,.ea-crear small{display:block}.ea-crear small{margin-top:4px;color:#f5cbd0;font-size:10px}
+.ea-mensajes{display:grid;gap:8px;margin-top:16px}.ea-mensaje{padding:13px 16px;background:#202125;border-left:3px solid #c51f32}
+.ea-panel{margin-top:20px;padding:24px;background:#151619;border:1px solid #36373c}
+.ea-panel-titulo h3{margin:9px 0;color:white;font-size:clamp(24px,3vw,32px)}.ea-panel-titulo p{color:#b4b4bb}
+.ea-contador{min-width:155px;padding:14px;background:#202125;border-left:3px solid #c51f32}
+.ea-contador span,.ea-contador small{display:block;color:#aaaab1;font-size:10px;letter-spacing:1px}
+.ea-contador strong{display:block;margin:5px 0;color:white;font-size:42px}
+.ea-linea{height:2px;margin:24px 0;background:linear-gradient(90deg,#c51f32,#44444a,transparent)}
+.ea-listado{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.ea-tarjeta{display:flex;flex-direction:column;min-width:0;overflow:hidden;background:#1b1c20;border:1px solid #3a3b40;transition:.25s;animation:ea-entrada .4s ease both}
+.ea-tarjeta:hover{border-color:#d22b3d;transform:translateY(-4px);box-shadow:0 12px 25px #0007}
+.ea-imagen{position:relative;height:240px;overflow:hidden;background:#24252a;border-bottom:2px solid #79212d}
+.ea-imagen img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.ea-tarjeta:hover .ea-imagen img{transform:scale(1.05)}
+.ea-sin-imagen{display:grid;place-content:center;height:100%;text-align:center;color:#aaaab1}
+.ea-sin-imagen strong{font-size:42px;color:white}.ea-sin-imagen span{font-size:10px;letter-spacing:2px}
+.ea-folio,.ea-estado{position:absolute;top:12px;padding:7px 9px;background:#101114e8;font-size:10px;letter-spacing:1px}
+.ea-folio{left:12px;border-left:2px solid #c51f32}.ea-estado{right:12px}
+.ea-activo{color:#83dfa6;border:1px solid #5ab98250}.ea-inactivo{color:#ef818a;border:1px solid #df596650}
+.ea-cuerpo{display:flex;flex:1;flex-direction:column;padding:20px}
+.ea-cuerpo h3{margin:9px 0;color:white;font-size:29px;overflow-wrap:anywhere}
+.ea-descripcion{color:#b8b8bf;font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+.ea-datos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:14px}
+.ea-dato{min-width:0;padding:12px;background:#24252a;border-left:2px solid #7d2631}
+.ea-dato-ancho{grid-column:1/-1}.ea-dato span{display:block;color:#aaaab1;font-size:10px;letter-spacing:1px}
+.ea-dato strong{display:block;margin-top:4px;color:white;font-size:14px;overflow-wrap:anywhere}
+.ea-acciones{display:flex;gap:10px;margin-top:auto;padding-top:18px}
+.ea-acciones a{display:flex;flex:1;align-items:center;justify-content:center;min-width:0;min-height:44px;padding:10px 8px;text-align:center;text-decoration:none;font-size:11px;font-weight:800;letter-spacing:.7px;transition:.2s}
+.ea-btn-editar{background:#292a2f;border:1px solid #55565c;color:white}.ea-btn-editar:hover{background:#42434a;transform:translateY(-2px)}
+.ea-btn-eliminar{background:#35191e;border:1px solid #c51f32;color:#ff8995}.ea-btn-eliminar:hover{background:#c51f32;color:white;transform:translateY(-2px)}
+.ea-pie{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:17px;padding-top:13px;border-top:1px solid #3b3b41;color:#999aa1;font-size:9px;letter-spacing:1px}
+.ea-vacio{grid-column:1/-1;padding:40px 15px;text-align:center;background:#1b1c20;border:1px dashed #55565c}.ea-vacio h3{margin:10px 0;color:white}.ea-vacio p{color:#b8b8bf}
+.ea-pie-general{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:15px;color:#a3a3aa;font-size:10px;letter-spacing:1px}
+@keyframes ea-entrada{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:850px){.ea-listado{grid-template-columns:1fr}}
+@media(max-width:560px){.escuadrones-archivo{padding:12px}.ea-barra,.ea-panel{padding:15px}.ea-panel-titulo{align-items:stretch;flex-direction:column}.ea-crear{width:100%}.ea-datos{grid-template-columns:1fr}.ea-dato-ancho{grid-column:auto}}
+@media(max-width:420px){.ea-acciones{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){.escuadrones-archivo *{animation:none!important;transition:none!important}}
+</style>
+
+<section class="escuadrones-archivo">
+    <header class="ea-barra">
+        <div class="ea-identidad">
+            <span class="ea-icono">COG</span>
+            <div>
+                <span class="ea-micro">COALITION OF ORDERED GOVERNMENTS</span>
+                <h2>ARCHIVO DE <span>ESCUADRONES</span></h2>
+            </div>
+        </div>
+        <a href="{% url 'gears_jeff:crear_escuadron' %}" class="ea-crear">
+            <span class="ea-crear-signo">+</span>
+            <span><strong>REGISTRAR ESCUADRÓN</strong><small>CREAR UNIDAD DE COMBATE</small></span>
+        </a>
+    </header>
+
+    {% if messages %}
+    <div class="ea-mensajes">
+        {% for message in messages %}
+        <div class="ea-mensaje {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="ea-panel">
+        <div class="ea-panel-titulo">
+            <div>
+                <span class="ea-etiqueta">UNIDADES TÁCTICAS · 04</span>
+                <h3>UNIDADES DE <span>COMBATE</span></h3>
+                <p>Consulta los escuadrones y sus datos operativos.</p>
+            </div>
+            <div class="ea-contador">
+                <span>ESCUADRONES REGISTRADOS</span>
+                <strong>{{ escuadrones|length|stringformat:"02d" }}</strong>
+                <small>UNIDADES EN SISTEMA</small>
+            </div>
+        </div>
+        <div class="ea-linea"></div>
+
+        {% if escuadrones %}
+        <div class="ea-listado">
+            {% for registro in escuadrones %}
+            <article class="ea-tarjeta">
+                <div class="ea-imagen">
+                    {% if registro.imagen %}
+                    <img src="{{ registro.imagen.url }}" alt="Imagen del escuadrón {{ registro.nombre }}" loading="lazy">
+                    {% else %}
+                    <div class="ea-sin-imagen"><strong>COG</strong><span>IMAGEN NO DISPONIBLE</span></div>
+                    {% endif %}
+                    <span class="ea-folio">UNIDAD {{ forloop.counter|stringformat:"03d" }}</span>
+                    <span class="ea-estado {% if registro.activo %}ea-activo{% else %}ea-inactivo{% endif %}">
+                        {% if registro.activo %}ACTIVO{% else %}INACTIVO{% endif %}
+                    </span>
+                </div>
+
+                <div class="ea-cuerpo">
+                    <span class="ea-etiqueta">EXPEDIENTE TÁCTICO</span>
+                    <h3>{{ registro.nombre }}</h3>
+                    <p class="ea-descripcion">{{ registro.descripcion|default:"No hay una descripción registrada."|truncatewords:35 }}</p>
+
+                    <div class="ea-datos">
+                        {% if registro.lider %}
+                        <div class="ea-dato ea-dato-ancho">
+                            <span>LÍDER DEL ESCUADRÓN</span>
+                            <strong>{{ registro.lider }}</strong>
+                        </div>
+                        {% endif %}
+                        {% if registro.mision %}
+                        <div class="ea-dato ea-dato-ancho">
+                            <span>MISIÓN ASIGNADA</span>
+                            <strong>{{ registro.mision }}</strong>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="ea-acciones">
+                        <a href="{% url 'gears_jeff:editar_escuadron' registro.id %}" class="ea-btn-editar"
+                           aria-label="Editar escuadrón {{ registro.nombre }}">EDITAR ESCUADRÓN</a>
+                        <a href="{% url 'gears_jeff:eliminar_escuadron' registro.id %}" class="ea-btn-eliminar"
+                           aria-label="Eliminar escuadrón {{ registro.nombre }}">ELIMINAR ESCUADRÓN</a>
+                    </div>
+
+                    <footer class="ea-pie">
+                        <span>COALICIÓN · MANDO TÁCTICO</span>
+                        <span>REF. {{ forloop.counter|stringformat:"03d" }}</span>
+                    </footer>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="ea-vacio">
+            <span class="ea-etiqueta">ARCHIVO TÁCTICO VACÍO</span>
+            <h3>NO HAY ESCUADRONES REGISTRADOS</h3>
+            <p>Crea una unidad para comenzar el registro de operaciones.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer class="ea-pie-general">
+        <span>CONEXIÓN CON LA BASE DE DATOS</span>
+        <span>COG COMMAND / UNIDADES TÁCTICAS</span>
+    </footer>
+</section>
+{% endblock %}

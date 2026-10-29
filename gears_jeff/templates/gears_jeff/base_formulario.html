@@ -1,0 +1,74 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0b0b0d">
+    <meta name="description" content="Terminal de registros y gestión de datos de COG COMMAND.">
+
+    <title>{% block titulo %}Registro COG | Gears of War{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="{% static 'gears_jeff/css/estilos.css' %}">
+    <link rel="stylesheet" href="{% static 'gears_jeff/css/formularios.css' %}">
+</head>
+
+<body class="pagina-formulario">
+
+    <div class="fondo-ambiente" aria-hidden="true"></div>
+    <div class="rejilla-ambiente" aria-hidden="true"></div>
+    <div class="lineas-ambiente" aria-hidden="true"></div>
+    <div class="particulas-ambiente" aria-hidden="true"></div>
+
+    <header class="encabezado">
+        <a href="{% url 'gears_jeff:inicio' %}" class="marca">
+            <span class="marca-emblema" aria-hidden="true">G</span>
+
+            <span class="marca-texto">
+                <strong>GEARS OF WAR</strong>
+                <small>SISTEMA DE REGISTROS COG</small>
+            </span>
+        </a>
+
+        <nav class="navegacion" aria-label="Navegación principal">
+            <a class="nav-enlace" href="{% url 'gears_jeff:inicio' %}">
+                INICIO
+            </a>
+
+            <a class="nav-enlace" href="{% url 'gears_jeff:inicio' %}#modulos">
+                MÓDULOS
+            </a>
+
+            <a class="nav-enlace" href="/admin/">
+                ADMINISTRACIÓN
+            </a>
+        </nav>
+
+        <div class="estado-cabecera">
+            <span class="estado-punto" aria-hidden="true"></span>
+            <span>SISTEMA ACTIVO</span>
+        </div>
+    </header>
+
+    <main class="zona-formulario">
+        {% block contenido %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inferior">
+            <span>© {% now "Y" %} CENTRO DE OPERACIONES</span>
+            <span>PROTOCOLO COG ACTIVO</span>
+        </div>
+    </footer>
+
+</body>
+</html>

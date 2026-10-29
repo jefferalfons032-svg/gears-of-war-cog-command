@@ -1,0 +1,381 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0b0d">
+    <meta name="description" content="Centro de operaciones de Gears of War. Archivos, soldados, arsenal y misiones.">
+
+    <title>GEARS OF WAR | Centro de Operaciones</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'gears_jeff/css/estilos.css' %}">
+</head>
+
+<body id="inicio">
+
+    <div class="fondo-atmosfera" aria-hidden="true"></div>
+    <div class="lineas-pantalla" aria-hidden="true"></div>
+    <div class="ruido" aria-hidden="true"></div>
+
+    <!-- ENCABEZADO -->
+    <header class="encabezado">
+        <a href="#inicio" class="marca">
+            <span class="marca-simbolo" aria-hidden="true">✹</span>
+            <span class="marca-texto">
+                <strong>GEARS <span>OF</span> WAR</strong>
+                <small>CENTRO DE OPERACIONES</small>
+            </span>
+        </a>
+
+        <nav class="navegacion" aria-label="Navegación principal">
+            <a class="activo" href="#inicio">Inicio</a>
+            <a href="#archivos">Archivos militares</a>
+            <a href="#transmision">Transmisión</a>
+        </nav>
+
+        <div class="estado-sistema">
+            <span class="luz-estado"></span>
+            <div>
+                <strong>SISTEMA ACTIVO</strong>
+                <small>COG // SECTOR 07</small>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- PORTADA -->
+        <section class="hero" aria-label="Portada de operaciones">
+
+            <div class="hero-video-fondo" aria-hidden="true">
+                <video autoplay muted loop playsinline preload="auto">
+                    <source src="{% static 'gears_jeff/videos/fondo.mp4' %}" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="hero-video-capa" aria-hidden="true"></div>
+            <div class="hero-reticula" aria-hidden="true"></div>
+
+            <div class="hero-contenido">
+                <div class="etiqueta-superior">
+                    <span class="punto-rojo"></span>
+                    TRANSMISIÓN MILITAR // PRIORIDAD MÁXIMA
+                </div>
+
+                <p class="sobrelinea">COALITION OF ORDERED GOVERNMENTS</p>
+
+                <h1>GEARS <span>OF WAR</span></h1>
+
+                <div class="hero-subtitulo">
+                    <span class="raya-roja"></span>
+                    <p>LA HUMANIDAD NO SE RINDE</p>
+                </div>
+
+                <p class="hero-descripcion">
+                    Sera está en guerra. Accede a los archivos militares,
+                    conoce a nuestros soldados, inspecciona el arsenal y
+                    prepárate para la siguiente misión.
+                </p>
+
+                <div class="hero-botones">
+                    <a href="#archivos" class="boton boton-rojo">
+                        <span aria-hidden="true">↗</span>
+                        EXPLORAR ARCHIVOS
+                    </a>
+
+                    <a href="#transmision" class="boton boton-metal">
+                        <span aria-hidden="true">▶</span>
+                        INFORME DE CAMPO
+                    </a>
+                </div>
+
+                <div class="hero-datos">
+                    <div>
+                        <span class="dato-icono" aria-hidden="true">◉</span>
+                        <div>
+                            <small>ESTADO</small>
+                            <strong>EN COMBATE</strong>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="dato-icono" aria-hidden="true">⌖</span>
+                        <div>
+                            <small>LOCALIZACIÓN</small>
+                            <strong>PLANETA SERA</strong>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="dato-icono" aria-hidden="true">✹</span>
+                        <div>
+                            <small>COMANDO</small>
+                            <strong>COG // 07</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="hero-panel">
+                <div class="panel-cabecera">
+                    <span>INFORME DE CAMPO</span>
+                    <span class="panel-codigo">COG-07</span>
+                </div>
+
+                <div class="panel-emblema" aria-hidden="true">✹</div>
+                <strong>PLANETA SERA</strong>
+                <p>LA SUPERVIVENCIA ES NUESTRA MISIÓN</p>
+
+                <div class="barras-estado" aria-hidden="true">
+                    <i></i><i></i><i></i><i></i>
+                    <i></i><i></i><i></i><i></i>
+                </div>
+
+                <div class="panel-pie">
+                    <span>ENLACE SEGURO</span>
+                    <span>● ACTIVO</span>
+                </div>
+            </aside>
+        </section>
+
+            <!-- Oscurecimiento del fondo -->
+            
+        <!-- ARCHIVOS MILITARES -->
+        <section class="archivos" id="archivos">
+
+            <div class="archivos-video-capa" aria-hidden="true"></div>
+
+            <div class="archivos-contenido">
+
+                <div class="seccion-cabecera">
+                    <div class="seccion-titulo">
+                        <span class="seccion-numero">01 /</span>
+                        <div>
+                            <p class="sobrelinea">BASE DE DATOS // COG</p>
+                            <h2>ARCHIVOS <span>MILITARES</span></h2>
+                        </div>
+                    </div>
+
+                    <div class="seccion-resumen">
+                        <span class="resumen-linea"></span>
+                        <p>
+                            INFORMACIÓN TÁCTICA<br>
+                            <strong>ACCESO AUTORIZADO</strong>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="archivo-intro">
+                    <p>
+                        Cada archivo contiene una parte de nuestra lucha.
+                        Selecciona un módulo para acceder a sus registros.
+                    </p>
+                    <span>REGISTROS DISPONIBLES: 06</span>
+                </div>
+
+                <div class="rejilla-modulos">
+                    {% for modulo in modulos %}
+                    <a
+                        href="{{ modulo.url|default:'#' }}"
+                        class="modulo modulo-{{ modulo.clase|default:'general' }}"
+                        style="--color-modulo: {{ modulo.color|default:'#b51f2b' }};"
+                    >
+                        <div class="modulo-imagen">
+                            {% if modulo.imagen %}
+                                {% if 'http://' in modulo.imagen or 'https://' in modulo.imagen or '/static/' in modulo.imagen %}
+                                    <img src="{{ modulo.imagen }}" alt="{{ modulo.nombre }}" loading="lazy">
+                                {% else %}
+                                    <img src="{% static modulo.imagen %}" alt="{{ modulo.nombre }}" loading="lazy">
+                                {% endif %}
+                            {% endif %}
+
+                            <div class="imagen-sombra"></div>
+                            <div class="imagen-brillo"></div>
+
+                            <span class="modulo-numero">
+                                {{ modulo.numero|default:forloop.counter|stringformat:"02d" }}
+                            </span>
+
+                            <span class="modulo-icono">{{ modulo.icono|default:"✹" }}</span>
+                            <span class="modulo-etiqueta">ARCHIVO COG</span>
+                            <span class="modulo-estado"><i></i> REGISTRADO</span>
+                        </div>
+
+                        <div class="modulo-info">
+                            <div class="modulo-titulo">
+                                <div>
+                                    <span class="modulo-clasificacion">
+                                        REGISTRO / {{ modulo.numero|default:forloop.counter }}
+                                    </span>
+                                    <h3>{{ modulo.nombre }}</h3>
+                                </div>
+                                <span class="flecha" aria-hidden="true">↗</span>
+                            </div>
+
+                            <p>{{ modulo.descripcion }}</p>
+
+                            <div class="modulo-pie">
+                                <span>ABRIR ARCHIVO</span>
+                                <span class="modulo-pie-linea"></span>
+                                <span class="indicador">+</span>
+                            </div>
+                        </div>
+                    </a>
+                    {% empty %}
+                    <div class="sin-modulos">
+                        <span aria-hidden="true">⚠</span>
+                        <h3>ARCHIVOS NO DISPONIBLES</h3>
+                        <p>Comprueba la lista de módulos de views.py.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TRANSMISIÓN -->
+        <section class="transmision" id="transmision">
+
+            <div class="transmision-imagen">
+                <img
+                    src="{% static 'gears_jeff/img/fondo-gears.jpg' %}"
+                    alt="Campo de batalla de Sera"
+                    loading="lazy"
+                >
+
+                <div class="transmision-sombra"></div>
+                <div class="transmision-marco"></div>
+
+                <span class="senal"><i></i> TRANSMISIÓN DE CAMPO</span>
+                <span class="transmision-coordenadas">SERA // SECTOR 07 // COG</span>
+            </div>
+
+            <div class="transmision-contenido">
+                <p class="sobrelinea">02 / MENSAJE DEL ALTO MANDO</p>
+
+                <h2>NO LUCHAMOS <span>POR LA GLORIA.</span></h2>
+
+                <div class="linea-roja"></div>
+
+                <p class="transmision-texto">
+                    Luchamos por quienes siguen aquí. Por quienes perdimos.
+                    Y por la oportunidad de que la humanidad tenga un mañana.
+                </p>
+
+                <div class="transmision-firma">
+                    <span class="firma-emblema" aria-hidden="true">✹</span>
+                    <div>
+                        <strong>COMANDO DE OPERACIONES COG</strong>
+                        <small>ORDEN · VALOR · SUPERVIVENCIA</small>
+                    </div>
+                </div>
+
+                <a href="#archivos" class="enlace-transmision">
+                    VOLVER A LOS ARCHIVOS <span aria-hidden="true">↗</span>
+                </a>
+            </div>
+
+            <div class="transmision-sello">
+                <span aria-hidden="true">✹</span>
+                <strong>REMEMBER<br>EMERGENCE DAY</strong>
+                <small>NO OLVIDAMOS</small>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="footer" id="pie-pagina">
+        <div class="footer-linea-superior"></div>
+
+        <div class="footer-contenedor">
+            <div class="footer-principal">
+                <a href="#inicio" class="footer-marca">
+                    <span class="footer-emblema" aria-hidden="true">✹</span>
+                    <span class="footer-marca-texto">
+                        <strong>GEARS <span>OF</span> WAR</strong>
+                        <small>LA HUMANIDAD RESISTE</small>
+                    </span>
+                </a>
+
+                <div class="footer-mensaje">
+                    <span class="footer-etiqueta">MENSAJE DEL COMANDO</span>
+                    <p>NUESTRA LUCHA NO TERMINA</p>
+                    <strong>MIENTRAS QUEDE ALGUIEN EN PIE.</strong>
+                </div>
+            </div>
+
+            <div class="footer-separador">
+                <span aria-hidden="true">✹</span>
+                <div></div>
+                <span>COG // 07</span>
+            </div>
+
+            <div class="footer-detalles">
+                <div class="footer-bloque">
+                    <span class="footer-icono" aria-hidden="true">✥</span>
+                    <div>
+                        <strong>COALITION OF ORDERED GOVERNMENTS</strong>
+                        <small>CENTRO DE OPERACIONES COG</small>
+                    </div>
+                </div>
+
+                <div class="footer-bloque">
+                    <span class="footer-icono" aria-hidden="true">⌖</span>
+                    <div>
+                        <strong>SECTOR 07 / SERA</strong>
+                        <small>DEFENSA Y SUPERVIVENCIA</small>
+                    </div>
+                </div>
+
+                <div class="footer-clasificado">
+                    <span>DOCUMENTO CLASIFICADO</span>
+                    <strong>/// COG-07 ///</strong>
+                </div>
+            </div>
+
+            <div class="footer-creditos">
+                <div class="creditos-linea"></div>
+
+                <div class="creditos-contenido">
+                    <span class="creditos-corchete">[</span>
+                    <span class="creditos-texto">DISEÑADO Y DESARROLLADO</span>
+                    <span class="creditos-texto">POR</span>
+                    <span class="creditos-nombre">JEFFERSON</span>
+                    <span class="creditos-carita">:3</span>
+                    <span class="creditos-corchete">]</span>
+                </div>
+
+                <p class="creditos-subtitulo">
+                    <span></span>
+                    UNA CREACIÓN DEL CENTRO DE OPERACIONES
+                    <span></span>
+                </p>
+
+                <div class="creditos-destello" aria-hidden="true">✦</div>
+            </div>
+
+            <div class="footer-final">
+                <span>© GEARS OF WAR — CENTRO DE OPERACIONES</span>
+                <span class="footer-final-derecha">
+                    LA HUMANIDAD NO SE RINDE <b>◆</b> COG
+                </span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FLECHAS FLOTANTES -->
+    <nav class="controles-desplazamiento" aria-label="Controles de desplazamiento">
+        <a href="#inicio" class="flecha-flotante" aria-label="Subir al inicio" title="Subir al inicio">↑</a>
+        <a href="#pie-pagina" class="flecha-flotante" aria-label="Bajar al final" title="Bajar al final">↓</a>
+    </nav>
+
+    <script src="{% static 'gears_jeff/js/interfaz.js' %}" defer></script>
+</body>
+</html>

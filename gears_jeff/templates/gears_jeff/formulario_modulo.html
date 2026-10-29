@@ -1,0 +1,170 @@
+
+{% extends "gears_jeff/base_formulario.html" %}
+
+{% block titulo %}{{ titulo_formulario }} | COG COMMAND{% endblock %}
+
+{% block contenido %}
+<section class="cog-screen">
+
+    <div class="cog-topline">
+        <span>COALICIÓN DE GOBIERNOS ORDENADOS</span>
+        <span class="cog-status">
+            <span class="estado-punto"></span>
+            TERMINAL SEGURA
+        </span>
+    </div>
+
+    <div class="cog-layout">
+
+        <aside class="cog-side-panel">
+            <div class="cog-insignia" aria-hidden="true">G</div>
+
+            <span class="cog-kicker">COG COMMAND / DATABASE</span>
+
+            <h1>ARCHIVO<br><span>DE CAMPO</span></h1>
+
+            <p>
+                Registra y actualiza la información del sistema
+                para mantener los archivos de la Coalición organizados.
+            </p>
+
+            <div class="cog-divider"></div>
+
+            <div class="cog-info-row">
+                <span>ESTADO</span>
+                <strong>EN LÍNEA</strong>
+            </div>
+
+            <div class="cog-info-row">
+                <span>ACCESO</span>
+                <strong>REGISTRO</strong>
+            </div>
+
+            <div class="cog-side-decoration" aria-hidden="true">COG</div>
+
+            <a class="cog-volver-inicio" href="{% url 'gears_jeff:inicio' %}">
+                VOLVER AL INICIO
+            </a>
+        </aside>
+
+        <section class="cog-form-panel">
+
+            <div class="cog-form-heading">
+                <div>
+                    <span class="cog-kicker">TERMINAL DE DATOS / REGISTRO</span>
+                    <h2>{{ titulo_formulario }}</h2>
+                    <p>{{ descripcion_formulario }}</p>
+                </div>
+
+                <span class="cog-number" aria-hidden="true">01</span>
+            </div>
+
+            {% if messages %}
+                <div class="cog-messages" aria-live="polite">
+                    {% for message in messages %}
+                        <p class="cog-message {{ message.tags }}">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" class="cog-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="cog-errors" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="cog-fields">
+                    {% for field in form %}
+                        <div class="cog-field {% if field.errors %}cog-field-error{% endif %}">
+
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                                {% if field.field.required %}
+                                    <span class="cog-required">*</span>
+                                {% endif %}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+                                <small class="cog-help">
+                                    {{ field.help_text }}
+                                </small>
+                            {% endif %}
+
+                            {% for error in field.errors %}
+                                <small class="cog-error" role="alert">
+                                    {{ error }}
+                                </small>
+                            {% endfor %}
+
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="cog-form-footer">
+
+                    <p class="cog-required-note">
+                        <span class="cog-required">*</span>
+                        Campos obligatorios
+                    </p>
+
+                    
+
+<div class="cog-actions">
+
+    {% if titulo_formulario == "Registrar personaje" %}
+        <a class="cog-cancel" href="/personajes/">
+            VOLVER AL MÓDULO
+        </a>
+
+    {% elif titulo_formulario == "Crear escuadrón" %}
+        <a class="cog-cancel" href="/escuadrones/">
+            VOLVER AL MÓDULO
+        </a>
+
+    {% elif titulo_formulario == "Registrar arma" %}
+        <a class="cog-cancel" href="/arsenal/">
+            VOLVER AL MÓDULO
+        </a>
+
+    {% elif titulo_formulario == "Registrar enemigo" %}
+        <a class="cog-cancel" href="/enemigos/">
+            VOLVER AL MÓDULO
+        </a>
+
+    {% elif titulo_formulario == "Registrar campaña" %}
+        <a class="cog-cancel" href="/campanas/">
+            VOLVER AL MÓDULO
+        </a>
+
+    {% elif titulo_formulario == "Registrar juego" %}
+        <a class="cog-cancel" href="/juegos/">
+            VOLVER AL MÓDULO
+        </a>
+
+    {% else %}
+        <a class="cog-cancel" href="/">
+            VOLVER AL INICIO
+        </a>
+    {% endif %}
+
+    <button class="cog-submit" type="submit">
+        GUARDAR REGISTRO
+    </button>
+
+</div>
+
+
+    <div class="cog-bottomline">
+        <span>COG COMMAND SYSTEM</span>
+        <span>ARCHIVO DE INFORMACIÓN // ACCESO AUTORIZADO</span>
+    </div>
+
+</section>
+{% endblock %}

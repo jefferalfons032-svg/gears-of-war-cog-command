@@ -1,0 +1,616 @@
+
+{% extends "gears_jeff/base_modulo.html" %}
+{% load static %}
+
+{% block titulo %}Personal militar | Gears of War{% endblock %}
+{% block encabezado %}ARCHIVO DE <span>PERSONAJES</span>{% endblock %}
+
+{% block descripcion %}
+Registro central de combatientes, comandantes y miembros de la Coalición.
+{% endblock %}
+
+{% block contenido %}
+<style>
+.archivo-personajes {
+    --rojo: #c51f32;
+    width: min(1280px, 100%);
+    margin: 12px auto 38px;
+    padding: clamp(14px, 2.5vw, 30px);
+    color: #eeeef0;
+    background: linear-gradient(145deg, #171317, #101114 55%);
+    border: 1px solid #383940;
+    border-top: 3px solid var(--rojo);
+    font-family: "Rajdhani", sans-serif;
+    box-sizing: border-box;
+}
+
+.archivo-personajes * {
+    box-sizing: border-box;
+}
+
+.ap-barra,
+.ap-panel-titulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.ap-barra {
+    padding: 24px;
+    background: linear-gradient(115deg, #302025, #1a1a1e 70%);
+    border: 1px solid #414146;
+}
+
+.ap-identidad {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.ap-icono {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    background: #c51f32;
+    border: 1px solid #f04a5a;
+    color: white;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.ap-micro,
+.ap-etiqueta {
+    color: #aaaab1;
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+.ap-identidad h2 {
+    margin: 7px 0 0;
+    font-size: clamp(24px, 3vw, 34px);
+    color: white;
+}
+
+.ap-identidad h2 span,
+.ap-panel-titulo h3 span {
+    color: #ed3548;
+}
+
+.ap-crear {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    color: white;
+    background: #a91d2e;
+    border: 1px solid #e33b4d;
+    text-decoration: none;
+    transition: .25s;
+}
+
+.ap-crear:hover {
+    background: #d5253a;
+    transform: translateY(-2px);
+}
+
+.ap-crear-signo {
+    font-size: 27px;
+}
+
+.ap-crear strong,
+.ap-crear small {
+    display: block;
+}
+
+.ap-crear small {
+    margin-top: 4px;
+    color: #f5cbd0;
+    font-size: 10px;
+}
+
+.ap-mensajes {
+    display: grid;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.ap-mensaje {
+    padding: 12px 15px;
+    background: #202125;
+    border-left: 3px solid #c51f32;
+}
+
+.ap-panel {
+    margin-top: 22px;
+    padding: clamp(16px, 3vw, 28px);
+    background: #151619;
+    border: 1px solid #36373c;
+}
+
+.ap-panel-titulo h3 {
+    margin: 10px 0;
+    color: white;
+    font-size: clamp(25px, 3vw, 35px);
+}
+
+.ap-panel-titulo p {
+    color: #b4b4bb;
+}
+
+.ap-contador {
+    min-width: 150px;
+    padding: 14px;
+    background: #202125;
+    border-left: 3px solid #c51f32;
+}
+
+.ap-contador span,
+.ap-contador small {
+    display: block;
+    color: #aaaab1;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.ap-contador strong {
+    display: block;
+    color: white;
+    font-size: 40px;
+}
+
+.ap-linea {
+    height: 2px;
+    margin: 24px 0;
+    background: linear-gradient(90deg, #c51f32, #44444a, transparent);
+}
+
+.ap-listado {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.personaje-ficha {
+    display: grid;
+    grid-template-columns: minmax(120px, 34%) minmax(0, 1fr);
+    min-width: 0;
+    overflow: hidden;
+    background: #191a1e;
+    border: 1px solid #393a40;
+    transition: .25s;
+    animation: ap-entrada .4s ease both;
+}
+
+.personaje-ficha:hover {
+    border-color: #c92b3d;
+    box-shadow: 0 12px 28px #0007;
+    transform: translateY(-3px);
+}
+
+.personaje-retrato {
+    position: relative;
+    min-height: 330px;
+    overflow: hidden;
+    background: #25262b;
+    border-right: 1px solid #383940;
+}
+
+.personaje-retrato img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    filter: saturate(.82);
+    transition: transform .4s;
+}
+
+.personaje-ficha:hover .personaje-retrato img {
+    transform: scale(1.05);
+}
+
+.ap-sin-retrato {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    gap: 8px;
+    text-align: center;
+    color: #aaaab1;
+}
+
+.ap-sin-retrato strong {
+    font-size: 36px;
+    color: white;
+}
+
+.personaje-numero {
+    position: absolute;
+    bottom: 12px;
+    left: 10px;
+    padding: 5px 8px;
+    background: #101114e8;
+    color: white;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.personaje-informacion {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 17px;
+}
+
+.personaje-encabezado {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.personaje-categoria {
+    color: #aaaab1;
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+.personaje-estado {
+    padding: 4px 6px;
+    font-size: 9px;
+    letter-spacing: .6px;
+}
+
+.personaje-online {
+    color: #83dfa6;
+    border: 1px solid #5ab98250;
+}
+
+.personaje-offline {
+    color: #ef818a;
+    border: 1px solid #df596650;
+}
+
+.personaje-informacion h3 {
+    margin: 12px 0 5px;
+    color: white;
+    font-size: clamp(22px, 2vw, 29px);
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+}
+
+.personaje-alias {
+    margin-bottom: 12px;
+    color: #d1d1d5;
+    font-size: 12px;
+}
+
+.personaje-alias strong {
+    color: #ed3548;
+}
+
+.personaje-biografia {
+    color: #b8b8bf;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.personaje-datos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.personaje-dato {
+    min-width: 0;
+    padding: 10px;
+    background: #24252a;
+    border-left: 2px solid #7d2631;
+}
+
+.personaje-dato span {
+    display: block;
+    color: #aaaab1;
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+.personaje-dato strong {
+    display: block;
+    margin-top: 4px;
+    color: white;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.personaje-acciones {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 16px;
+}
+
+.personaje-acciones a {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 42px;
+    padding: 9px 6px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .6px;
+    transition: .2s;
+}
+
+.personaje-btn-editar {
+    background: #292a2f;
+    border: 1px solid #55565c;
+    color: white;
+}
+
+.personaje-btn-editar:hover {
+    background: #42434a;
+    transform: translateY(-2px);
+}
+
+.personaje-btn-eliminar {
+    background: #35191e;
+    border: 1px solid #c51f32;
+    color: #ff8995;
+}
+
+.personaje-btn-eliminar:hover {
+    background: #c51f32;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.ap-pie {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #3b3b41;
+    color: #999aa1;
+    font-size: 9px;
+    letter-spacing: .7px;
+}
+
+.ap-vacio {
+    padding: 40px 15px;
+    text-align: center;
+    background: #1b1c20;
+    border: 1px dashed #55565c;
+}
+
+.ap-vacio h3 {
+    margin: 10px 0;
+    color: white;
+}
+
+.ap-vacio p {
+    color: #b8b8bf;
+}
+
+.ap-pie-general {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+    color: #999aa1;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+@keyframes ap-entrada {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 950px) {
+    .ap-listado {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .archivo-personajes {
+        padding: 10px;
+    }
+
+    .ap-barra,
+    .ap-panel {
+        padding: 14px;
+    }
+
+    .ap-panel-titulo {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .ap-crear {
+        width: 100%;
+    }
+
+    .personaje-ficha {
+        grid-template-columns: 105px minmax(0, 1fr);
+    }
+
+    .personaje-retrato {
+        min-height: 280px;
+    }
+
+    .personaje-informacion {
+        padding: 12px;
+    }
+
+    .personaje-datos {
+        grid-template-columns: 1fr;
+    }
+
+    .personaje-acciones {
+        flex-direction: column;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .archivo-personajes * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+</style>
+
+<section class="archivo-personajes">
+    <header class="ap-barra">
+        <div class="ap-identidad">
+            <span class="ap-icono">COG</span>
+            <div>
+                <span class="ap-micro">COALITION OF ORDERED GOVERNMENTS</span>
+                <h2>ARCHIVO DE <span>PERSONAL MILITAR</span></h2>
+            </div>
+        </div>
+
+        <a href="{% url 'gears_jeff:crear_personaje' %}" class="ap-crear">
+            <span class="ap-crear-signo">+</span>
+            <span>
+                <strong>REGISTRAR PERSONAJE</strong>
+                <small>AÑADIR EXPEDIENTE</small>
+            </span>
+        </a>
+    </header>
+
+    {% if messages %}
+    <div class="ap-mensajes">
+        {% for message in messages %}
+        <div class="ap-mensaje {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="ap-panel">
+        <div class="ap-panel-titulo">
+            <div>
+                <span class="ap-etiqueta">BASE DE DATOS MILITAR · 01</span>
+                <h3>EXPEDIENTES DE <span>COMBATE</span></h3>
+                <p>Consulta la información y el estado de cada combatiente.</p>
+            </div>
+
+            <div class="ap-contador">
+                <span>PERSONAJES REGISTRADOS</span>
+                <strong>{{ personajes|length|stringformat:"02d" }}</strong>
+                <small>EXPEDIENTES EN SISTEMA</small>
+            </div>
+        </div>
+
+        <div class="ap-linea"></div>
+
+        {% if personajes %}
+        <div class="ap-listado">
+            {% for registro in personajes %}
+            <article class="personaje-ficha">
+                <div class="personaje-retrato">
+                    {% if registro.imagen %}
+                    <img src="{{ registro.imagen.url }}" alt="Retrato de {{ registro.nombre }}" loading="lazy">
+                    {% else %}
+                    <div class="ap-sin-retrato">
+                        <strong>COG</strong>
+                        <span>SIN RETRATO</span>
+                    </div>
+                    {% endif %}
+
+                    <span class="personaje-numero">
+                        EXP. {{ forloop.counter|stringformat:"03d" }}
+                    </span>
+                </div>
+
+                <div class="personaje-informacion">
+                    <div class="personaje-encabezado">
+                        <span class="personaje-categoria">EXPEDIENTE MILITAR</span>
+                        <span class="personaje-estado {% if registro.activo %}personaje-online{% else %}personaje-offline{% endif %}">
+                            {% if registro.activo %}EN SERVICIO{% else %}FUERA DE SERVICIO{% endif %}
+                        </span>
+                    </div>
+
+                    <h3>{{ registro.nombre }}</h3>
+
+                    <p class="personaje-alias">
+                        {% if registro.alias %}
+                            INDICATIVO <strong>“{{ registro.alias }}”</strong>
+                        {% else %}
+                            INDICATIVO NO ASIGNADO
+                        {% endif %}
+                    </p>
+
+                    <p class="personaje-biografia">
+                        {{ registro.biografia|default:"No hay información biográfica disponible."|truncatewords:35 }}
+                    </p>
+
+                    <div class="personaje-datos">
+                        <div class="personaje-dato">
+                            <span>RANGO MILITAR</span>
+                            <strong>{{ registro.rango|default:"SIN ASIGNAR" }}</strong>
+                        </div>
+
+                        <div class="personaje-dato">
+                            <span>AFILIACIÓN</span>
+                            <strong>{{ registro.afiliacion|default:"SIN ASIGNAR" }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="personaje-acciones">
+                        <a
+                            href="{% url 'gears_jeff:editar_personaje' registro.id %}"
+                            class="personaje-btn-editar"
+                            aria-label="Editar expediente de {{ registro.nombre }}"
+                        >EDITAR</a>
+
+                        <a
+                            href="{% url 'gears_jeff:eliminar_personaje' registro.id %}"
+                            class="personaje-btn-eliminar"
+                            aria-label="Eliminar expediente de {{ registro.nombre }}"
+                        >ELIMINAR</a>
+                    </div>
+
+                    <footer class="ap-pie">
+                        <span>COALICIÓN · PERSONAL</span>
+                        <span>REF. {{ forloop.counter|stringformat:"03d" }}</span>
+                    </footer>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="ap-vacio">
+            <span class="ap-etiqueta">ARCHIVO VACÍO</span>
+            <h3>NO HAY PERSONAJES REGISTRADOS</h3>
+            <p>Registra el primer expediente militar para comenzar.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer class="ap-pie-general">
+        <span>CONEXIÓN CON LA BASE DE DATOS</span>
+        <span>COG COMMAND / PERSONAL MILITAR</span>
+    </footer>
+</section>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends "gears_jeff/base_modulo.html" %}
+
+{% block titulo %}Enemigos | Gears of War{% endblock %}
+{% block encabezado %}AMENAZAS DE <span>SERA</span>{% endblock %}
+{% block descripcion %}
+Identifica las especies enemigas, sus habilidades y su nivel de peligrosidad.
+{% endblock %}
+
+{% block contenido %}
+<style>
+.enemigos-archivo{width:min(1180px,100%);margin:25px auto;padding:24px;box-sizing:border-box;color:#eeeef0;background:#101114;border:1px solid #38393e;border-top:4px solid #c51f32;font-family:"Rajdhani",sans-serif}
+.enemigos-archivo *{box-sizing:border-box}
+.en-barra,.en-panel-titulo{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px}
+.en-barra{padding:22px;background:linear-gradient(110deg,#302025,#191a1e 70%);border:1px solid #414146}
+.en-identidad{display:flex;align-items:center;gap:15px}
+.en-icono{display:grid;place-items:center;width:60px;height:60px;flex-shrink:0;background:#c51f32;color:white;font-weight:900;font-size:19px}
+.en-micro,.en-etiqueta{color:#aaaab1;font-size:10px;letter-spacing:2px}
+.en-identidad h2{margin:6px 0 0;color:white;font-size:clamp(23px,3vw,31px)}
+.en-identidad h2 span,.en-panel-titulo h3 span{color:#ed3548}
+.en-crear{display:flex;align-items:center;gap:12px;padding:12px 18px;color:white;text-decoration:none;background:#b71f31;border:1px solid #e33b4d;transition:.2s}
+.en-crear:hover{background:#e0273d;transform:translateY(-2px)}
+.en-crear-signo{font-size:28px}.en-crear strong,.en-crear small{display:block}.en-crear small{margin-top:4px;color:#f5cbd0;font-size:10px}
+.en-mensajes{display:grid;gap:8px;margin-top:16px}.en-mensaje{padding:13px 16px;background:#202125;border-left:3px solid #c51f32}
+.en-panel{margin-top:20px;padding:24px;background:#151619;border:1px solid #36373c}
+.en-panel-titulo h3{margin:9px 0;color:white;font-size:clamp(24px,3vw,32px)}.en-panel-titulo p{color:#b4b4bb}
+.en-contador{min-width:155px;padding:14px;background:#202125;border-left:3px solid #c51f32}
+.en-contador span,.en-contador small{display:block;color:#aaaab1;font-size:10px;letter-spacing:1px}
+.en-contador strong{display:block;margin:5px 0;color:white;font-size:42px}
+.en-linea{height:2px;margin:24px 0;background:linear-gradient(90deg,#c51f32,#44444a,transparent)}
+.en-listado{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.en-tarjeta{display:flex;flex-direction:column;min-width:0;overflow:hidden;background:#1b1c20;border:1px solid #3a3b40;transition:.25s;animation:en-entrada .4s ease both}
+.en-tarjeta:hover{border-color:#d22b3d;transform:translateY(-4px);box-shadow:0 12px 25px #0007}
+.en-imagen{position:relative;height:250px;overflow:hidden;background:#24252a;border-bottom:2px solid #79212d}
+.en-imagen img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.en-tarjeta:hover .en-imagen img{transform:scale(1.05)}
+.en-sin-imagen{display:grid;place-content:center;height:100%;text-align:center;color:#aaaab1}
+.en-sin-imagen strong{font-size:42px;color:white}.en-sin-imagen span{font-size:10px;letter-spacing:2px}
+.en-folio,.en-estado{position:absolute;top:12px;padding:7px 9px;background:#101114e8;font-size:10px;letter-spacing:1px}
+.en-folio{left:12px;border-left:2px solid #c51f32}.en-estado{right:12px}
+.en-activo{color:#ff8995;border:1px solid #c51f3250}.en-inactivo{color:#83dfa6;border:1px solid #5ab98250}
+.en-cuerpo{display:flex;flex:1;flex-direction:column;padding:20px}
+.en-cuerpo h3{margin:9px 0;color:white;font-size:29px;overflow-wrap:anywhere}
+.en-descripcion{color:#b8b8bf;font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+.en-datos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:14px}
+.en-dato{min-width:0;padding:12px;background:#24252a;border-left:2px solid #7d2631}
+.en-dato-ancho{grid-column:1/-1}.en-dato span{display:block;color:#aaaab1;font-size:10px;letter-spacing:1px}
+.en-dato strong{display:block;margin-top:4px;color:white;font-size:14px;overflow-wrap:anywhere}
+.en-acciones{display:flex;gap:10px;margin-top:auto;padding-top:18px}
+.en-acciones a{display:flex;flex:1;align-items:center;justify-content:center;min-width:0;min-height:44px;padding:10px 8px;text-align:center;text-decoration:none;font-size:11px;font-weight:800;letter-spacing:.7px;transition:.2s}
+.en-btn-editar{background:#292a2f;border:1px solid #55565c;color:white}.en-btn-editar:hover{background:#42434a;transform:translateY(-2px)}
+.en-btn-eliminar{background:#35191e;border:1px solid #c51f32;color:#ff8995}.en-btn-eliminar:hover{background:#c51f32;color:white;transform:translateY(-2px)}
+.en-pie{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:17px;padding-top:13px;border-top:1px solid #3b3b41;color:#999aa1;font-size:9px;letter-spacing:1px}
+.en-vacio{grid-column:1/-1;padding:40px 15px;text-align:center;background:#1b1c20;border:1px dashed #55565c}.en-vacio h3{margin:10px 0;color:white}.en-vacio p{color:#b8b8bf}
+.en-pie-general{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:15px;color:#a3a3aa;font-size:10px;letter-spacing:1px}
+@keyframes en-entrada{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:850px){.en-listado{grid-template-columns:1fr}}
+@media(max-width:560px){.enemigos-archivo{padding:12px}.en-barra,.en-panel{padding:15px}.en-panel-titulo{align-items:stretch;flex-direction:column}.en-crear{width:100%}.en-datos{grid-template-columns:1fr}.en-dato-ancho{grid-column:auto}}
+@media(max-width:420px){.en-acciones{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){.enemigos-archivo *{animation:none!important;transition:none!important}}
+</style>
+
+<section class="enemigos-archivo">
+    <header class="en-barra">
+        <div class="en-identidad">
+            <span class="en-icono">COG</span>
+            <div>
+                <span class="en-micro">COALITION OF ORDERED GOVERNMENTS</span>
+                <h2>ARCHIVO DE <span>AMENAZAS</span></h2>
+            </div>
+        </div>
+        <a href="{% url 'gears_jeff:crear_enemigo' %}" class="en-crear">
+            <span class="en-crear-signo">+</span>
+            <span><strong>REGISTRAR ENEMIGO</strong><small>AÑADIR AMENAZA</small></span>
+        </a>
+    </header>
+
+    {% if messages %}
+    <div class="en-mensajes">
+        {% for message in messages %}
+        <div class="en-mensaje {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="en-panel">
+        <div class="en-panel-titulo">
+            <div>
+                <span class="en-etiqueta">INTELIGENCIA MILITAR · 05</span>
+                <h3>AMENAZAS DE <span>SERA</span></h3>
+                <p>Consulta los datos y la información de las fuerzas enemigas.</p>
+            </div>
+            <div class="en-contador">
+                <span>ENEMIGOS REGISTRADOS</span>
+                <strong>{{ enemigos|length|stringformat:"02d" }}</strong>
+                <small>REGISTROS EN SISTEMA</small>
+            </div>
+        </div>
+        <div class="en-linea"></div>
+
+        {% if enemigos %}
+        <div class="en-listado">
+            {% for registro in enemigos %}
+            <article class="en-tarjeta">
+                <div class="en-imagen">
+                    {% if registro.imagen %}
+                    <img src="{{ registro.imagen.url }}" alt="Imagen de {{ registro.nombre }}" loading="lazy">
+                    {% else %}
+                    <div class="en-sin-imagen"><strong>COG</strong><span>IMAGEN NO DISPONIBLE</span></div>
+                    {% endif %}
+                    <span class="en-folio">AMENAZA {{ forloop.counter|stringformat:"03d" }}</span>
+                    <span class="en-estado {% if registro.activo %}en-activo{% else %}en-inactivo{% endif %}">
+                        {% if registro.activo %}AMENAZA ACTIVA{% else %}INACTIVO{% endif %}
+                    </span>
+                </div>
+
+                <div class="en-cuerpo">
+                    <span class="en-etiqueta">INFORME DE INTELIGENCIA</span>
+                    <h3>{{ registro.nombre }}</h3>
+                    <p class="en-descripcion">{{ registro.descripcion|default:"No hay información registrada."|truncatewords:40 }}</p>
+
+                    <div class="en-datos">
+                        {% if registro.tipo %}
+                        <div class="en-dato">
+                            <span>TIPO DE AMENAZA</span>
+                            <strong>{{ registro.tipo }}</strong>
+                        </div>
+                        {% endif %}
+                        {% if registro.peligrosidad %}
+                        <div class="en-dato">
+                            <span>NIVEL DE PELIGRO</span>
+                            <strong>{{ registro.peligrosidad }}</strong>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="en-acciones">
+                        <a href="{% url 'gears_jeff:editar_enemigo' registro.id %}" class="en-btn-editar"
+                           aria-label="Editar enemigo {{ registro.nombre }}">EDITAR ENEMIGO</a>
+                        <a href="{% url 'gears_jeff:eliminar_enemigo' registro.id %}" class="en-btn-eliminar"
+                           aria-label="Eliminar enemigo {{ registro.nombre }}">ELIMINAR ENEMIGO</a>
+                    </div>
+
+                    <footer class="en-pie">
+                        <span>COALICIÓN · INTELIGENCIA</span>
+                        <span>REF. {{ forloop.counter|stringformat:"03d" }}</span>
+                    </footer>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="en-vacio">
+            <span class="en-etiqueta">ARCHIVO SIN REGISTROS</span>
+            <h3>NO HAY ENEMIGOS REGISTRADOS</h3>
+            <p>Añade una amenaza para comenzar el archivo de inteligencia.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer class="en-pie-general">
+        <span>CONEXIÓN CON LA BASE DE DATOS</span>
+        <span>COG COMMAND / INTELIGENCIA MILITAR</span>
+    </footer>
+</section>
+{% endblock %}
